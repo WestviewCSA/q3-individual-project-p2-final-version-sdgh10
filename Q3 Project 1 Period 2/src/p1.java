@@ -17,19 +17,11 @@ public class p1 {
     private ArrayList<String[][]> layers;
     private boolean outputCoordinate;
     
-    public p1(String filename, boolean isCoordinate) throws IncorrectMapFormatException, 
-    IncompleteMapException, 
-    IllegalMapCharacterException {
-this.outputCoordinate = false;
-
-if (isCoordinate) {
-readCoordinateMazeFile(filename);
-} else {
-layers = readTextMazeFile(filename);
-}
-findStartAndGoal();
-}
-
+    public p1() {
+        // Default constructor for autograder
+        this.outputCoordinate = false;
+    }
+    
     public static void main(String[] args) {
         boolean useStack = false;
         boolean useQueue = false;
@@ -128,6 +120,19 @@ findStartAndGoal();
         System.out.println("  --Help           Display this help message");
         System.out.println();
         System.out.println("Usage: java Main [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
+    }
+    
+    public p1(String filename, boolean isCoordinate) throws IncorrectMapFormatException, 
+                                        IncompleteMapException, 
+                                        IllegalMapCharacterException {
+        this.outputCoordinate = false;
+        
+        if (isCoordinate) {
+            readCoordinateMazeFile(filename);
+        } else {
+            layers = readTextMazeFile(filename);
+        }
+        findStartAndGoal();
     }
     
 
