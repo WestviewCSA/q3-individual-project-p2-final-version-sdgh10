@@ -11,6 +11,7 @@ Walkway '|': Teleports to next maze layer at same coordinates
 
 Stack Behavior: Push/Pop instead of enqueue/dequeue
 
+
 No revisiting: Must track visited positions to avoid loops
 
 Path marking: Show route with '+' symbols
