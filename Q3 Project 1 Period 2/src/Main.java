@@ -118,6 +118,9 @@ public class Main {
             }
         }
         
+        Position.setGoal(goal);
+
+        
         // If start or goal not found, the store is closed
         if (start == null || goal == null) {
             System.out.println("The Wolverine Store is closed.");
@@ -164,7 +167,7 @@ public class Main {
      *  (e.g., storing a list of unique usernames).
      */
     // STACK SOLVER
-    public ArrayList<Position> solveWithStack() {
+    public ArrayList<Position> solveWithStack() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException {
         // Use HashSet to track visited positions
         HashSet<String> visited = new HashSet<>();
         
@@ -189,13 +192,13 @@ public class Main {
             
             // Explore all 4 directions
             for (int[] dir : directions) {
-                int newRow = current.row + dir[0];
-                int newCol = current.col + dir[1];
-                int newLayer = current.layer;
+                int newRow = current.getRow() + dir[0];
+                int newCol = current.getCol() + dir[1];
+                int newLayer = current.getLayer();
                 
                 // Check if move is within bounds and not a wall
                 if (isValid(newRow, newCol, newLayer)) {
-                    String cell = layers.get(newLayer)[newRow][newCol];
+                    String cell = readMazeFile("/src/easyMap1").get(newLayer)[newRow][newCol];
                     
                     // Case 1: Regular walkable tile (., W, $)
                     if (cell.equals(".") || cell.equals("W") || cell.equals("$")) {

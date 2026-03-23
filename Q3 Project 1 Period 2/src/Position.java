@@ -5,7 +5,8 @@ public class Position{
 	private int col;
 	private int layer;
 	private Position prev;
-	
+    private static int[] goal; // Make goal static so all instances share it
+
 	public Position(int r, int c, int l) {
 		row = r;
 		col = c;
@@ -20,6 +21,20 @@ public class Position{
 		this.prev = prev;
 	}
 	
+	public int getRow() {
+		return row;
+	}
+	public int getCol() {
+		return col;
+	}
+	public int getLayer() {
+		return layer;
+	}
+    public static void setGoal(int[] goalCoords) {
+        goal = goalCoords;
+    }
+    
+    
 	public String getKey() {
 		return layer + "," + row + "," + col;
 	}
