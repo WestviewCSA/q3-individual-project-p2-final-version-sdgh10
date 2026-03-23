@@ -2,3 +2,18 @@ Okay this is the 3rd time i've had to import from git. And I hope I did it right
 because NOTHING saved and I'm so bummed because i thought it was just a bug that it didn't show up in git
 and i'm super glad I had the foresight to copy and paste all my existing code into my drive so I can
 actually work on this at home.
+
+UNDERSTANDING THE REQUIREMENTS
+Keys from Spec:
+Movement: North, South, East, West only (order matters for queue but not stack)
+
+Walkway '|': Teleports to next maze layer at same coordinates 
+
+Stack Behavior: Push/Pop instead of enqueue/dequeue
+
+No revisiting: Must track visited positions to avoid loops
+
+Path marking: Show route with '+' symbols
+
+Output format: Text-map format (original maze with '+' markings)
+

@@ -1,4 +1,30 @@
-
+public class Position{
+	
+	int row;
+	int col;
+	int layer;
+	Position prev;
+	
+	public Position(int r, int c, int l) {
+		row = r;
+		col = c;
+		layer = l;
+		prev = null;
+	}
+	
+	public Position(int r, int c, int l, Position prev) {
+		row = r;
+		col = c;
+		layer = l;
+		this.prev = prev;
+	}
+	
+	public String toString() {
+		return row + "," + col + "," + layer;
+	}
+	
+	
+}
 
 
 
