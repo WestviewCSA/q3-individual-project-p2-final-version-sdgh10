@@ -17,6 +17,18 @@ public class p1 {
     private ArrayList<String[][]> layers;
     private boolean outputCoordinate;
     
+    public p1(String filename, boolean isCoordinate) throws IncorrectMapFormatException, 
+    IncompleteMapException, 
+    IllegalMapCharacterException {
+this.outputCoordinate = false;
+
+if (isCoordinate) {
+readCoordinateMazeFile(filename);
+} else {
+layers = readTextMazeFile(filename);
+}
+findStartAndGoal();
+}
 
     public static void main(String[] args) {
         boolean useStack = false;
@@ -118,18 +130,7 @@ public class p1 {
         System.out.println("Usage: java Main [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
     }
     
-    public p1(String filename, boolean isCoordinate) throws IncorrectMapFormatException, 
-                                        IncompleteMapException, 
-                                        IllegalMapCharacterException {
-        this.outputCoordinate = false;
-        
-        if (isCoordinate) {
-            readCoordinateMazeFile(filename);
-        } else {
-            layers = readTextMazeFile(filename);
-        }
-        findStartAndGoal();
-    }
+
     
     public void setOutputCoordinate(boolean outputCoordinate) {
         this.outputCoordinate = outputCoordinate;
