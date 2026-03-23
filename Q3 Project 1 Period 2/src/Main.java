@@ -17,21 +17,96 @@ public class Main {
 	
 	private int[] start;
 	private int[] goal;
-	
-	public Main() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException{
-//        readMazeFile("/src/easyMap1");
-//        findStartAndGoal();
-    }
+
     
 	
 	
     public static void main(String[] args) {
- //   		String filename = "/src/easyMap2";
-    		
-    	
-    		
+        // Parse command line arguments
+        boolean useStack = false;
+        boolean useQueue = false;
+        boolean useOpt = false;
+        boolean showTime = false;
+        String filename = null;
+        int solverFlags = 0;
+        
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--Stack")) {
+                useStack = true;
+                solverFlags++;
+            } else if (args[i].equals("--Queue")) {
+                useQueue = true;
+                solverFlags++;
+            } else if (args[i].equals("--Opt")) {
+                useOpt = true;
+                solverFlags++;
+            } else if (args[i].equals("--Time")) {
+                showTime = true;
+            } else if (!args[i].startsWith("--")) {
+                filename = args[i];
+            }
+        }
+        
+        // Check that exactly one solver flag was specified
+        if (solverFlags != 1) {
+            System.err.println("Error: Must specify exactly one of --Stack, --Queue, or --Opt");
+            System.exit(-1);
+        }
+        
+        // Use default filename if none provided
+        if (filename == null) {
+            filename = "src/hardMap1";
+        }
+        
+        try {
+            Main solver = new Main(filename);
+            
+            long startTime = System.nanoTime();
+            ArrayList<Position> path = null;
+            
+            if (useStack) {
+                System.out.println("Using Stack-based approach (DFS)");
+                path = solver.solveWithStack();
+            }
+//            } else if (useQueue) {
+//                System.out.println("Using Queue-based approach (BFS)");
+//                path = solver.solveWithQueue();
+//            } else if (useOpt) {
+//                System.out.println("Using Optimal approach (Shortest Path)");
+//                path = solver.solveOptimal();
+//            }
+            
+            long endTime = System.nanoTime();
+            double runtimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+            
+            if (path != null) {
+                solver.markAndPrintPath(path);
+                if (showTime) {
+                    System.out.printf("Total Runtime: %.3f seconds\n", runtimeSeconds);
+                }
+            } else {
+                System.out.println("The Wolverine Store is closed.");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(-1);
+        }
     }
-	
+    
+    // Constructor
+    public Main(String filename) throws IncorrectMapFormatException, 
+                                        IncompleteMapException, 
+                                        IllegalMapCharacterException {
+        readMazeFile(filename);
+        findStartAndGoal();
+    }
+    
+    
+    
+    
+    
+    
 	//direct text-map thing v v v v 
 
     public ArrayList<String[][]> readMazeFile(String filename) throws IncorrectMapFormatException, 
@@ -106,7 +181,7 @@ public class Main {
  // Find start and goal positions
     public void findStartAndGoal() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException {
         for (int l = 0; l < layerCount; l++) {
-            String[][] grid = readMazeFile("/src/easyMap1").get(l);
+            String[][] grid = readMazeFile("src/hardMap1").get(l);
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     if (grid[r][c].equals("W")) {
@@ -136,7 +211,7 @@ public class Main {
         if (col < 0 || col >= cols) {
         		return false;
         }
-        String cell = readMazeFile("/src/easyMap1").get(layer)[row][col];
+        String cell = readMazeFile("src/hardMap1").get(layer)[row][col];
         return !cell.equals("@");
     }
     
@@ -198,7 +273,7 @@ public class Main {
                 
                 // Check if move is within bounds and not a wall
                 if (isValid(newRow, newCol, newLayer)) {
-                    String cell = readMazeFile("/src/easyMap1").get(newLayer)[newRow][newCol];
+                    String cell = readMazeFile("src/hardMap1").get(newLayer)[newRow][newCol];
                     
                     // Case 1: Regular walkable tile (., W, $)
                     if (cell.equals(".") || cell.equals("W") || cell.equals("$")) {
@@ -227,6 +302,51 @@ public class Main {
         
         return null;  // No path found
     }
+    
+    
+    // Mark path with '+' and print in text-map format
+    public void markAndPrintPath(ArrayList<Position> path) throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException {
+        if (path == null) return;
+        
+        // Create deep copies of all layers
+        ArrayList<String[][]> solutionLayers = new ArrayList<>();
+        for (String[][] original : readMazeFile("src/hardMap1")) {
+            String[][] copy = new String[rows][cols];
+            for (int i = 0; i < rows; i++) {
+                System.arraycopy(original[i], 0, copy[i], 0, cols);
+            }
+            solutionLayers.add(copy);
+        }
+        
+        // Mark the path with '+'
+        for (Position pos : path) {
+            // Don't overwrite start and goal
+            if (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]) {
+                continue;
+            }
+            if (pos.isGoal()) {
+                continue;
+            }
+            
+            String[][] layer = solutionLayers.get(pos.getLayer());
+            layer[pos.getRow()][pos.getCol()] = "+";
+        }
+        
+        // Print in text-map format
+        for (int l = 0; l < layerCount; l++) {
+            String[][] grid = solutionLayers.get(l);
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    System.out.print(grid[r][c]);
+                }
+                System.out.println();
+            }
+            if (l < layerCount - 1) {
+                System.out.println(); // Blank line between layers
+            }
+        }
+    }
+
 }
 //
 //    // We store each maze layer as a separate 2D array in an ArrayList.
@@ -824,7 +944,7 @@ public class Main {
 ////////		
 ////////		//hello
 ////////		
-////////		File file = new File("src/easyMap1");
+////////		File file = new File("src/hardMap1");
 ////////		
 ////////		String[][] arr = reader(file);
 ////////		System.out.println(toString(arr));
