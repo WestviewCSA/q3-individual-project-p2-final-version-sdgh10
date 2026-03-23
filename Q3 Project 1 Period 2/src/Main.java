@@ -1,12 +1,63 @@
-//import java.io.File;
-//import java.io.FileNotFoundException;
-//import java.util.ArrayList;
-//import java.util.LinkedList;
-//import java.util.Queue;
-//import java.util.Scanner;
-//import java.util.Stack;
-//
-//public class Main {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+import java.util.Stack;
+import java.util.zip.DataFormatException;
+
+public class Main {
+	
+	private int rows;
+	private int cols;
+	private int layerCount;
+	
+	private int[] start;
+	private int[] goal;
+	
+	public Main(){
+        readMazeFile("/src/easyMap1");
+//        findStartAndGoal();
+    }
+    
+    public static void main(String[] args) {
+    		String filename = "/src/easyMap2";
+    		
+    	
+    		
+    }
+	
+    
+    public void readMazeFile(String filename){
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            rows = scanner.nextInt();
+            cols = scanner.nextInt();
+            layerCount = scanner.nextInt();
+            ArrayList<String[][]>layers = new ArrayList<>();
+            
+            // Read each layer
+            for (int i = 0; i < layerCount; i++) {
+                String[][] grid = new String[rows][cols];
+                
+                for (int r = 0; r < rows; r++) {
+                    
+                    String line = scanner.next();
+                    
+                    for (int c = 0; c < cols; c++) {
+                        String character = line.substring(c, c+1);
+                        // Check for illegal characters??????????????
+                        
+                        grid[r][c] = character;
+                    }
+                }
+                layers.add(grid);
+            }
+        } catch (FileNotFoundException e) {
+            
+        }
+    }
+}
 //
 //    // We store each maze layer as a separate 2D array in an ArrayList.
 //    // This avoids any 3D arrays.

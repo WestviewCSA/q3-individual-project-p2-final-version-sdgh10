@@ -1,9 +1,9 @@
 public class Position{
 	
-	int row;
-	int col;
-	int layer;
-	Position prev;
+	private int row;
+	private int col;
+	private int layer;
+	private Position prev;
 	
 	public Position(int r, int c, int l) {
 		row = r;
@@ -20,7 +20,7 @@ public class Position{
 	}
 	
 	public String toString() {
-		return row + "," + col + "," + layer;
+		return layer + "," + row + "," + col;
 	}
 	
 	
