@@ -17,11 +17,7 @@ public class p1 {
     private ArrayList<String[][]> layers;
     private boolean outputCoordinate;
     
-    public p1() {
-        // Default constructor for autograder
-        this.outputCoordinate = false;
-    }
-    
+
     public static void main(String[] args) {
         boolean useStack = false;
         boolean useQueue = false;
@@ -134,8 +130,6 @@ public class p1 {
         }
         findStartAndGoal();
     }
-    
-
     
     public void setOutputCoordinate(boolean outputCoordinate) {
         this.outputCoordinate = outputCoordinate;
