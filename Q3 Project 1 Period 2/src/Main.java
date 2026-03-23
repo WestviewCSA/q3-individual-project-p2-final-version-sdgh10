@@ -1,3 +1,14 @@
+/*
+ * 
+ * COMMENTED OUT CODE TAKES FILE INPUT
+ * 
+ * ACTIVE CODE WORKS WITH MANUAL TEST CASES
+ */
+
+
+
+
+
 //import java.io.File;
 //import java.io.FileNotFoundException;
 //import java.util.ArrayList;
@@ -645,7 +656,8 @@ public class Main {
             System.err.println("Error: Must specify exactly one of --Stack, --Queue, or --Opt");
             System.exit(-1);
         }
-        
+//THIS IS HOW YOU CHANGE FILES
+//IM PRETTY SURE THIS WORKS, BUT THE COMMENTED OUT CODE SHOULD BE ABLE TO TAKE A FILE INTAKE
         if (filename == null) {
             filename = "src/coordEasyMap2";
         }
