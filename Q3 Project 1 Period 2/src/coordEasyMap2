@@ -1,0 +1,22 @@
+4 4 1
+W...
+....
+$...
+....
+
+441
+W000
+$200
+
+//generate another map that you would classify as trivial
+
+//use scaner to parse the dimensions then use the dimensiions w a scanner to build the map
+//that way you can deal w cases like
+
+//4 4 1
+//..W.d65f4as65df12
+//....5sd1
+//..$.
+//....56112
+//65423
+

@@ -1,0 +1,4 @@
+Okay this is the 3rd time i've had to import from git. And I hope I did it right this time 
+because NOTHING saved and I'm so bummed because i thought it was just a bug that it didn't show up in git
+and i'm super glad I had the foresight to copy and paste all my existing code into my drive so I can
+actually work on this at home.
