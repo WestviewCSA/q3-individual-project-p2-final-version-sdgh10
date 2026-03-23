@@ -16,11 +16,13 @@ public class Main {
 	private int[] start;
 	private int[] goal;
 	
-	public Main(){
+	public Main() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException{
         readMazeFile("/src/easyMap1");
 //        findStartAndGoal();
     }
     
+	
+	
     public static void main(String[] args) {
     		String filename = "/src/easyMap2";
     		
@@ -28,33 +30,69 @@ public class Main {
     		
     }
 	
-    
-    public void readMazeFile(String filename){
-        try (Scanner scanner = new Scanner(new File(filename))) {
+	//direct text-map thing v v v v 
+
+    public void readMazeFile(String filename) throws IncorrectMapFormatException, 
+    IncompleteMapException, 
+    IllegalMapCharacterException{
+    		
+    		try (Scanner scanner = new Scanner(new File(filename))) {
+            // Check first line format
+            if (!scanner.hasNextInt()) {
+                throw new IncorrectMapFormatException("First line must start with row count");
+            }
             rows = scanner.nextInt();
+            
+            if (!scanner.hasNextInt()) {
+                throw new IncorrectMapFormatException("Missing column count");
+            }
             cols = scanner.nextInt();
+            
+            if (!scanner.hasNextInt()) {
+                throw new IncorrectMapFormatException("Missing layer count");
+            }
             layerCount = scanner.nextInt();
-            ArrayList<String[][]>layers = new ArrayList<>();
+            
+            if (rows <= 0 || cols <= 0 || layerCount <= 0) {
+                throw new IncorrectMapFormatException("Rows, columns, and layers must be positive");
+            }
+            
+            ArrayList<String[][]> layers = new ArrayList<>();
             
             // Read each layer
-            for (int i = 0; i < layerCount; i++) {
+            for (int l = 0; l < layerCount; l++) {
                 String[][] grid = new String[rows][cols];
                 
                 for (int r = 0; r < rows; r++) {
+                    if (!scanner.hasNext()) {
+                        throw new IncompleteMapException("Missing row " + r + " in layer " + l);
+                    }
                     
                     String line = scanner.next();
                     
+                    if (line.length() < cols) {
+                        throw new IncompleteMapException("Row " + r + " in layer " + l + 
+                                                         " has only " + line.length() + 
+                                                         " characters, needs " + cols);
+                    }
+                    
                     for (int c = 0; c < cols; c++) {
-                        String character = line.substring(c, c+1);
-                        // Check for illegal characters??????????????
-                        
-                        grid[r][c] = character;
+                        String ch = line.substring(c, c + 1);
+                        // Check for illegal characters
+                        if (!ch.equals(".") && !ch.equals("@") && !ch.equals("W") && 
+                            !ch.equals("$") && !ch.equals("|")) {
+                            throw new IllegalMapCharacterException("Illegal character '" + ch + 
+                                                                   "' at layer " + l + 
+                                                                   ", row " + r + ", col " + c);
+                        }
+                        grid[r][c] = ch;
                     }
                 }
                 layers.add(grid);
             }
-        } catch (FileNotFoundException e) {
             
+        } catch (FileNotFoundException e) {
+            throw new IncorrectMapFormatException("File not found: " + filename);
         }
     }
 }
