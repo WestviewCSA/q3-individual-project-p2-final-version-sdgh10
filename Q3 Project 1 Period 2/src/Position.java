@@ -1,3 +1,4 @@
+
 public class Position{
 	
 	private int row;
@@ -19,8 +20,16 @@ public class Position{
 		this.prev = prev;
 	}
 	
-	public String toString() {
+	public String getKey() {
 		return layer + "," + row + "," + col;
+	}
+	
+	public Position getPrev() {
+		return prev;
+	}
+	
+	public boolean isGoal() {
+		return row == goal[0] && col == goal[1] && layer == goal[2];
 	}
 	
 	

@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -17,14 +19,14 @@ public class Main {
 	private int[] goal;
 	
 	public Main() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException{
-        readMazeFile("/src/easyMap1");
+//        readMazeFile("/src/easyMap1");
 //        findStartAndGoal();
     }
     
 	
 	
     public static void main(String[] args) {
-    		String filename = "/src/easyMap2";
+ //   		String filename = "/src/easyMap2";
     		
     	
     		
@@ -32,7 +34,7 @@ public class Main {
 	
 	//direct text-map thing v v v v 
 
-    public void readMazeFile(String filename) throws IncorrectMapFormatException, 
+    public ArrayList<String[][]> readMazeFile(String filename) throws IncorrectMapFormatException, 
     IncompleteMapException, 
     IllegalMapCharacterException{
     		
@@ -91,9 +93,136 @@ public class Main {
                 layers.add(grid);
             }
             
+            return layers;
+            
         } catch (FileNotFoundException e) {
             throw new IncorrectMapFormatException("File not found: " + filename);
         }
+    }
+    
+    
+    
+    
+ // Find start and goal positions
+    public void findStartAndGoal() throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException {
+        for (int l = 0; l < layerCount; l++) {
+            String[][] grid = readMazeFile("/src/easyMap1").get(l);
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    if (grid[r][c].equals("W")) {
+                        start = new int[]{r, c, l};
+                    } else if (grid[r][c].equals("$")) {
+                        goal = new int[]{r, c, l};
+                    }
+                }
+            }
+        }
+        
+        // If start or goal not found, the store is closed
+        if (start == null || goal == null) {
+            System.out.println("The Wolverine Store is closed.");
+            System.exit(0);
+        }
+    }
+    
+    // Check if position is valid (within bounds and not a wall)
+    public boolean isValid(int row, int col, int layer) throws IncorrectMapFormatException, IncompleteMapException, IllegalMapCharacterException {
+        if (row < 0 || row >= rows) {
+        		return false;
+        }
+        if (col < 0 || col >= cols) {
+        		return false;
+        }
+        String cell = readMazeFile("/src/easyMap1").get(layer)[row][col];
+        return !cell.equals("@");
+    }
+    
+    // Teleport to next layer
+    public int teleport(int currentLayer) {
+        return (currentLayer + 1) % layerCount;
+    }
+    
+    public ArrayList<Position> reconstructPath(Position end) {
+        ArrayList<Position> path = new ArrayList<>();
+        Position current = end;
+        
+        while (current != null) {
+            path.add(0, current);
+            current = current.getPrev();
+        }
+        
+        return path;
+    }
+    
+    
+    //HashSet
+    /*
+     * Use a HashSet when you need to store
+     *  a collection of unique elements and 
+     *  only care about whether an element exists or not, 
+     *  without any associated data 
+     *  (e.g., storing a list of unique usernames).
+     */
+    // STACK SOLVER
+    public ArrayList<Position> solveWithStack() {
+        // Use HashSet to track visited positions
+        HashSet<String> visited = new HashSet<>();
+        
+        // Create stack for DFS
+        Stack<Position> stack = new Stack<>();
+        
+        // Push starting position
+        Position startPos = new Position(start[0], start[1], start[2]);
+        stack.push(startPos);
+        visited.add(startPos.getKey());
+        
+        // Directions: North, South, West, East
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        
+        while (!stack.isEmpty()) {
+            Position current = stack.pop();
+            
+            // Check if we found the goal
+            if (current.isGoal()) {
+                return reconstructPath(current);
+            }
+            
+            // Explore all 4 directions
+            for (int[] dir : directions) {
+                int newRow = current.row + dir[0];
+                int newCol = current.col + dir[1];
+                int newLayer = current.layer;
+                
+                // Check if move is within bounds and not a wall
+                if (isValid(newRow, newCol, newLayer)) {
+                    String cell = layers.get(newLayer)[newRow][newCol];
+                    
+                    // Case 1: Regular walkable tile (., W, $)
+                    if (cell.equals(".") || cell.equals("W") || cell.equals("$")) {
+                        Position next = new Position(newRow, newCol, newLayer, current);
+                        if (!visited.contains(next.getKey())) {
+                            visited.add(next.getKey());
+                            stack.push(next);
+                        }
+                    }
+                    // Case 2: Walkway - teleport to next layer
+                    else if (cell.equals("|")) {
+                        int teleportedLayer = teleport(newLayer);
+                        
+                        // Check if teleport destination is valid
+                        if (isValid(newRow, newCol, teleportedLayer)) {
+                            Position teleported = new Position(newRow, newCol, teleportedLayer, current);
+                            if (!visited.contains(teleported.getKey())) {
+                                visited.add(teleported.getKey());
+                                stack.push(teleported);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return null;  // No path found
     }
 }
 //
