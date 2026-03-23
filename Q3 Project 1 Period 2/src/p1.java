@@ -52,16 +52,14 @@ public class p1 {
             }
         }
         
-        // Check that exactly one solver flag was specified
         if (solverFlags != 1) {
             System.err.println("Error: Must specify exactly one of --Stack, --Queue, or --Opt");
             System.exit(-1);
         }
         
-        // Check that a filename was provided
         if (filename == null) {
             System.err.println("Error: No input file specified");
-            System.err.println("Usage: java Main [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
+            System.err.println("Usage: java p1 [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
             System.exit(-1);
         }
         
@@ -82,17 +80,20 @@ public class p1 {
             
             long endTime = System.nanoTime();
             double runtimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+ //if i need to print the coordinates.....
             
             if (path != null) {
                 if (outputCoordinate) {
                     solver.printPathCoordinates(path);
-                } else {
+                } 
+                else {
                     solver.markAndPrintPath(path);
                 }
                 if (showTime) {
                     System.out.printf("Total Runtime: %.9f seconds\n", runtimeSeconds);
                 }
-            } else {
+            } 
+            else {
                 System.out.println("The Wolverine Store is closed.");
             }
             
@@ -107,15 +108,15 @@ public class p1 {
         System.out.println("Finds a path from W to $ through multiple maze layers with teleporters (|)");
         System.out.println();
         System.out.println("Command Line Switches:");
-        System.out.println("  --Stack          Use stack-based approach (DFS)");
-        System.out.println("  --Queue          Use queue-based approach (BFS)");
-        System.out.println("  --Opt            Use optimal approach (shortest path)");
+        System.out.println("  --Stack          Use stack-based approach");
+        System.out.println("  --Queue          Use queue-based approach");
+        System.out.println("  --Opt            Use optimal approach");
         System.out.println("  --Time           Print runtime after solving");
         System.out.println("  --Incoordinate   Input file is in coordinate format");
         System.out.println("  --Outcoordinate  Output in coordinate format (path coordinates)");
         System.out.println("  --Help           Display this help message");
         System.out.println();
-        System.out.println("Usage: java Main [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
+        System.out.println("Usage: java p1 [--Stack|--Queue|--Opt] [--Time] [--Incoordinate] [--Outcoordinate] <filename>");
     }
     
     public p1(String filename, boolean isCoordinate) throws IncorrectMapFormatException, 
@@ -125,7 +126,8 @@ public class p1 {
         
         if (isCoordinate) {
             readCoordinateMazeFile(filename);
-        } else {
+        } 
+        else {
             layers = readTextMazeFile(filename);
         }
         findStartAndGoal();
@@ -135,6 +137,9 @@ public class p1 {
         this.outputCoordinate = outputCoordinate;
     }
     
+    
+    
+    //maybe doesn't need to return anything?
     public ArrayList<String[][]> readTextMazeFile(String filename) throws IncorrectMapFormatException, 
     IncompleteMapException, 
     IllegalMapCharacterException {
@@ -191,7 +196,7 @@ public class p1 {
             }
             
             return layers;
-            
+                        
         } catch (FileNotFoundException e) {
             throw new IncorrectMapFormatException("File not found: " + filename);
         }
@@ -232,13 +237,21 @@ public class p1 {
             }
             
             while (scanner.hasNext()) {
-                if (!scanner.hasNext()) break;
+                if (!scanner.hasNext()) {
+                	break;
+                }
                 String type = scanner.next();
-                if (!scanner.hasNextInt()) break;
+                if (!scanner.hasNextInt()) {
+                	break;
+                }
                 int row = scanner.nextInt();
-                if (!scanner.hasNextInt()) break;
+                if (!scanner.hasNextInt()) {
+                	break;
+                }
                 int col = scanner.nextInt();
-                if (!scanner.hasNextInt()) break;
+                if (!scanner.hasNextInt()) {
+                	break;
+                }
                 int layer = scanner.nextInt();
                 
                 if (row < 0 || row >= rows || col < 0 || col >= cols || layer < 0 || layer >= layerCount) {
@@ -501,7 +514,8 @@ public class p1 {
     }
     
     public ArrayList<Position> reconstructPath2(int[] rows, int[] cols, int[] layers, int[] pIndex, int endIndex) {
-        ArrayList<Position> path = new ArrayList<>();
+        
+    	ArrayList<Position> path = new ArrayList<>();
         
         int length = 0;
         int tempIndex = endIndex;
@@ -529,18 +543,19 @@ public class p1 {
         if (path == null) return;
         
         for (Position pos : path) {
-            if (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]) {
-                continue;
+            boolean isStart = (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]);
+            boolean isGoal = pos.isGoal();
+            
+            if (!isStart && !isGoal) {
+                System.out.println("+ " + pos.getRow() + " " + pos.getCol() + " " + pos.getLayer());
             }
-            if (pos.isGoal()) {
-                continue;
-            }
-            System.out.println("+ " + pos.getRow() + " " + pos.getCol() + " " + pos.getLayer());
         }
     }
     
     public void markAndPrintPath(ArrayList<Position> path) {
-        if (path == null) return;
+        if (path == null) {
+        	return;
+        }
         
         ArrayList<String[][]> solutionLayers = new ArrayList<>();
         for (String[][] original : layers) {
@@ -552,15 +567,13 @@ public class p1 {
         }
         
         for (Position pos : path) {
-            if (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]) {
-                continue;
-            }
-            if (pos.isGoal()) {
-                continue;
-            }
+            boolean isStart = (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]);
+            boolean isGoal = pos.isGoal();
             
-            String[][] layer = solutionLayers.get(pos.getLayer());
-            layer[pos.getRow()][pos.getCol()] = "+";
+            if (!isStart && !isGoal) {
+                String[][] layer = solutionLayers.get(pos.getLayer());
+                layer[pos.getRow()][pos.getCol()] = "+";
+            }
         }
         
         for (int l = 0; l < layerCount; l++) {
@@ -577,15 +590,6 @@ public class p1 {
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
 //import java.io.File;
 //import java.io.FileNotFoundException;
@@ -981,184 +985,4 @@ public class p1 {
 //                                Position teleported = new Position(newRow, newCol, teleportedLayer, current);
 //                                if (!visited.contains(teleported.getKey())) {
 //                                    visited.add(teleported.getKey());
-//                                    queue.add(teleported);
-//                                    if (teleported.isGoal()) {
-//                                        return reconstructPath(teleported);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        
-//        return null;
-//    }
-//    
-//    public ArrayList<Position> solveOptimal() {
-//        if (start[0] == goal[0] && start[1] == goal[1] && start[2] == goal[2]) {
-//            ArrayList<Position> path = new ArrayList<>();
-//            path.add(new Position(start[0], start[1], start[2]));
-//            return path;
-//        }
-//        
-//        int totalCells = layerCount * rows * cols;
-//        boolean[] visited = new boolean[totalCells];
-//        
-//        int rowMultiplier = cols;
-//        int layerMultiplier = rows * cols;
-//        
-//        int maxSize = totalCells;
-//        int[] queueRows = new int[maxSize];
-//        int[] queueCols = new int[maxSize];
-//        int[] queueLayers = new int[maxSize];
-//        int[] pIndex = new int[maxSize];
-//        int front = 0;
-//        int rear = 0;
-//        
-//        int[] teleportMap = new int[layerCount];
-//        for (int i = 0; i < layerCount; i++) {
-//            teleportMap[i] = (i + 1) % layerCount;
-//        }
-//        
-//        queueRows[rear] = start[0];
-//        queueCols[rear] = start[1];
-//        queueLayers[rear] = start[2];
-//        int startIndex = start[2] * layerMultiplier + start[0] * rowMultiplier + start[1];
-//        visited[startIndex] = true;
-//        pIndex[rear] = -1;
-//        rear++;
-//        
-//        int[][] directions = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
-//        
-//        while (front < rear) {
-//            int currentRow = queueRows[front];
-//            int currentCol = queueCols[front];
-//            int currentLayer = queueLayers[front];
-//            
-//            if (currentRow == goal[0] && currentCol == goal[1] && currentLayer == goal[2]) {
-//                return reconstructPath2(queueRows, queueCols, queueLayers, pIndex, front);
-//            }
-//            
-//            for (int[] dir : directions) {
-//                int newRow = currentRow + dir[0];
-//                int newCol = currentCol + dir[1];
-//                
-//                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-//                    String cell = layers.get(currentLayer)[newRow][newCol];
-//                    
-//                    if (cell.equals("@")) {
-//                        continue;
-//                    }
-//                    
-//                    if (!cell.equals("|")) {
-//                        int newIndex = currentLayer * layerMultiplier + newRow * rowMultiplier + newCol;
-//                        if (!visited[newIndex]) {
-//                            visited[newIndex] = true;
-//                            queueRows[rear] = newRow;
-//                            queueCols[rear] = newCol;
-//                            queueLayers[rear] = currentLayer;
-//                            pIndex[rear] = front;
-//                            rear++;
-//                        }
-//                    } else {
-//                        int newLayer = teleportMap[currentLayer];
-//                        int newIndex = newLayer * layerMultiplier + newRow * rowMultiplier + newCol;
-//                        if (!visited[newIndex]) {
-//                            String destCell = layers.get(newLayer)[newRow][newCol];
-//                            if (!destCell.equals("@")) {
-//                                visited[newIndex] = true;
-//                                queueRows[rear] = newRow;
-//                                queueCols[rear] = newCol;
-//                                queueLayers[rear] = newLayer;
-//                                pIndex[rear] = front;
-//                                rear++;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            front++;
-//        }
-//        
-//        return null;
-//    }
-//    
-//    public ArrayList<Position> reconstructPath2(int[] rows, int[] cols, int[] layers, int[] pIndex, int endIndex) {
-//        ArrayList<Position> path = new ArrayList<>();
-//        
-//        int length = 0;
-//        int tempIndex = endIndex;
-//        while (tempIndex != -1) {
-//            length++;
-//            tempIndex = pIndex[tempIndex];
-//        }
-//        
-//        Position[] tempPath = new Position[length];
-//        int pos = length - 1;
-//        int currentIndex = endIndex;
-//        while (currentIndex != -1) {
-//            tempPath[pos--] = new Position(rows[currentIndex], cols[currentIndex], layers[currentIndex]);
-//            currentIndex = pIndex[currentIndex];
-//        }
-//        
-//        for (int i = 0; i < length; i++) {
-//            path.add(tempPath[i]);
-//        }
-//        
-//        return path;
-//    }
-//    
-//    public void printPathCoordinates(ArrayList<Position> path) {
-//        if (path == null) return;
-//        
-//        for (Position pos : path) {
-//            if (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]) {
-//                continue;
-//            }
-//            if (pos.isGoal()) {
-//                continue;
-//            }
-//            System.out.println("+ " + pos.getRow() + " " + pos.getCol() + " " + pos.getLayer());
-//        }
-//    }
-//    
-//    public void markAndPrintPath(ArrayList<Position> path) {
-//        if (path == null) return;
-//        
-//        ArrayList<String[][]> solutionLayers = new ArrayList<>();
-//        for (String[][] original : layers) {
-//            String[][] copy = new String[rows][cols];
-//            for (int i = 0; i < rows; i++) {
-//                System.arraycopy(original[i], 0, copy[i], 0, cols);
-//            }
-//            solutionLayers.add(copy);
-//        }
-//        
-//        for (Position pos : path) {
-//            if (pos.getRow() == start[0] && pos.getCol() == start[1] && pos.getLayer() == start[2]) {
-//                continue;
-//            }
-//            if (pos.isGoal()) {
-//                continue;
-//            }
-//            
-//            String[][] layer = solutionLayers.get(pos.getLayer());
-//            layer[pos.getRow()][pos.getCol()] = "+";
-//        }
-//        
-//        for (int l = 0; l < layerCount; l++) {
-//            String[][] grid = solutionLayers.get(l);
-//            for (int r = 0; r < rows; r++) {
-//                for (int c = 0; c < cols; c++) {
-//                    System.out.print(grid[r][c]);
-//                }
-//                System.out.println();
-//            }
-//            if (l < layerCount - 1) {
-//                System.out.println();
-//            }
-//        }
-//    }
-//}
+//                                    queue.add(teleported
